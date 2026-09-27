@@ -1,0 +1,5 @@
+<odoo>
+    <record id="fi_ess_profile_company_rule" model="ir.rule"><field name="name">ESS profiles: company</field><field name="model_id" ref="model_fi_ess_profile"/><field name="groups" eval="[(4, ref('fi_employee_self_service.group_ess_hr_manager'))]"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+    <record id="fi_ess_financial_company_rule" model="ir.rule"><field name="name">ESS requests: company</field><field name="model_id" ref="model_fi_ess_financial_request"/><field name="groups" eval="[(4, ref('fi_employee_self_service.group_ess_hr_manager'))]"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+    <record id="fi_ess_audit_company_rule" model="ir.rule"><field name="name">ESS audit: company</field><field name="model_id" ref="model_fi_ess_audit_log"/><field name="groups" eval="[(4, ref('fi_employee_self_service.group_ess_administrator'))]"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+</odoo>
