@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ess_config_admin,employee.self.service.config admin,model_employee_self_service_config,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_profile_admin,employee.self.service.profile admin,model_employee_self_service_profile,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_profile_hr,employee.self.service.profile hr,model_employee_self_service_profile,employee_self_service.group_ess_hr_manager,1,0,0,0
+access_ess_session_admin,employee.self.service.session admin,model_employee_self_service_session,employee_self_service.group_ess_administrator,1,0,0,0
+access_ess_invitation_admin,employee.self.service.invitation admin,model_employee_self_service_invitation,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_request_type_admin,employee.self.service.request.type admin,model_employee_self_service_request_type,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_financial_hr,employee.self.service.financial.request hr,model_employee_self_service_financial_request,employee_self_service.group_ess_hr_manager,1,1,1,0
+access_ess_audit_admin,employee.self.service.audit.log admin,model_employee_self_service_audit_log,employee_self_service.group_ess_administrator,1,0,0,0
