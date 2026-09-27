@@ -26,7 +26,13 @@ class EmployeeSelfServiceProfile(models.Model):
     lockout_until = fields.Datetime(copy=False, index=True)
     last_successful_login = fields.Datetime(copy=False)
     last_password_change = fields.Datetime(copy=False)
-    allowed_request_type_ids = fields.Many2many("employee.self.service.request.type", string="Allowed Financial Request Types")
+    allowed_request_type_ids = fields.Many2many(
+        "employee.self.service.request.type",
+        "ess_profile_req_type_rel",
+        "profile_id",
+        "request_type_id",
+        string="Allowed Financial Request Types",
+    )
 
     @api.depends("password_hash")
     def _compute_password_set(self):
