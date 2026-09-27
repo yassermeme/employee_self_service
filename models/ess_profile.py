@@ -21,7 +21,7 @@ class EmployeeSelfServiceProfile(models.Model):
     authentication_mode = fields.Selection([("real", "Individual Odoo user"), ("shared", "Shared user"), ("both", "Both")], default="both", required=True)
     state = fields.Selection([("pending", "Pending activation"), ("active", "Active"), ("locked", "Locked"), ("disabled", "Disabled")], default="pending", required=True, index=True)
     password_hash = fields.Char(copy=False, groups="employee_self_service.group_ess_administrator")
-    password_set = fields.Boolean(compute="_compute_password_set")
+    password_set = fields.Boolean(compute="_compute_password_set", compute_sudo=True)
     failed_login_count = fields.Integer(default=0, copy=False)
     lockout_until = fields.Datetime(copy=False, index=True)
     last_successful_login = fields.Datetime(copy=False)
@@ -36,7 +36,7 @@ class EmployeeSelfServiceProfile(models.Model):
 
     @api.depends("password_hash")
     def _compute_password_set(self):
-        for record in self:
+        for record in self.sudo():
             record.password_set = bool(record.password_hash)
 
     @api.constrains("employee_code", "work_email", "company_id")
