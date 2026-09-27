@@ -4,13 +4,13 @@ from datetime import timedelta
 from odoo import api, fields, models
 
 
-class FiEssSession(models.Model):
-    _name = "fi.ess.session"
+class EmployeeSelfServiceSession(models.Model):
+    _name = "employee.self.service.session"
     _description = "Server-side ESS Session"
     _rec_name = "profile_id"
     _order = "create_date desc"
 
-    profile_id = fields.Many2one("fi.ess.profile", required=True, ondelete="cascade", index=True)
+    profile_id = fields.Many2one("employee.self.service.profile", required=True, ondelete="cascade", index=True)
     user_id = fields.Many2one("res.users", required=True, ondelete="cascade", index=True)
     token_hash = fields.Char(required=True, index=True, copy=False)
     odoo_session_id_hash = fields.Char(required=True, index=True, copy=False)
@@ -18,7 +18,7 @@ class FiEssSession(models.Model):
     revoked_at = fields.Datetime(index=True)
     last_seen_at = fields.Datetime()
     auth_method = fields.Selection([("real", "Individual Odoo user"), ("shared", "Shared Odoo user")], required=True)
-    _sql_constraints = [("fi_ess_session_token_unique", "unique(token_hash)", "Invalid duplicate session token.")]
+    _sql_constraints = [("ess_session_token_unique", "unique(token_hash)", "Invalid duplicate session token.")]
 
     @staticmethod
     def _digest(value):
@@ -26,7 +26,7 @@ class FiEssSession(models.Model):
 
     @api.model
     def create_for_request(self, profile, user, odoo_session_id, auth_method):
-        config = self.env["fi.ess.config"].sudo().for_company(profile.company_id)
+        config = self.env["employee.self.service.config"].sudo().for_company(profile.company_id)
         raw_token = secrets.token_urlsafe(48)
         now = fields.Datetime.now()
         self.sudo().create({
@@ -55,7 +55,7 @@ class FiEssSession(models.Model):
         active = self.sudo().search([("profile_id", "=", profile.id), ("revoked_at", "=", False)])
         if active:
             active.write({"revoked_at": fields.Datetime.now()})
-            self.env["fi.ess.audit.log"].sudo().create([{"profile_id": profile.id, "event": event} for _item in active])
+            self.env["employee.self.service.audit.log"].sudo().create([{"profile_id": profile.id, "event": event} for _item in active])
 
     @api.autovacuum
     def _gc_expired_sessions(self):

@@ -1,9 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_fi_ess_config_admin,fi.ess.config admin,model_fi_ess_config,fi_employee_self_service.group_ess_administrator,1,1,1,1
-access_fi_ess_profile_admin,fi.ess.profile admin,model_fi_ess_profile,fi_employee_self_service.group_ess_administrator,1,1,1,1
-access_fi_ess_profile_hr,fi.ess.profile hr,model_fi_ess_profile,fi_employee_self_service.group_ess_hr_manager,1,0,0,0
-access_fi_ess_session_admin,fi.ess.session admin,model_fi_ess_session,fi_employee_self_service.group_ess_administrator,1,0,0,0
-access_fi_ess_invitation_admin,fi.ess.invitation admin,model_fi_ess_invitation,fi_employee_self_service.group_ess_administrator,1,1,1,1
-access_fi_ess_request_type_admin,fi.ess.request.type admin,model_fi_ess_request_type,fi_employee_self_service.group_ess_administrator,1,1,1,1
-access_fi_ess_financial_hr,fi.ess.financial.request hr,model_fi_ess_financial_request,fi_employee_self_service.group_ess_hr_manager,1,1,1,0
-access_fi_ess_audit_admin,fi.ess.audit.log admin,model_fi_ess_audit_log,fi_employee_self_service.group_ess_administrator,1,0,0,0
+access_ess_config_admin,employee.self.service.config admin,model_employee_self_service_config,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_profile_admin,employee.self.service.profile admin,model_employee_self_service_profile,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_profile_hr,employee.self.service.profile hr,model_employee_self_service_profile,employee_self_service.group_ess_hr_manager,1,0,0,0
+access_ess_session_admin,employee.self.service.session admin,model_employee_self_service_session,employee_self_service.group_ess_administrator,1,0,0,0
+access_ess_invitation_admin,employee.self.service.invitation admin,model_employee_self_service_invitation,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_request_type_admin,employee.self.service.request.type admin,model_employee_self_service_request_type,employee_self_service.group_ess_administrator,1,1,1,1
+access_ess_financial_hr,employee.self.service.financial.request hr,model_employee_self_service_financial_request,employee_self_service.group_ess_hr_manager,1,1,1,0
+access_ess_audit_admin,employee.self.service.audit.log admin,model_employee_self_service_audit_log,employee_self_service.group_ess_administrator,1,0,0,0

@@ -1,13 +1,13 @@
 from odoo import fields, models
 
 
-class FiEssAuditLog(models.Model):
-    _name = "fi.ess.audit.log"
+class EmployeeSelfServiceAuditLog(models.Model):
+    _name = "employee.self.service.audit.log"
     _description = "ESS Security Audit Log"
     _order = "create_date desc, id desc"
     _rec_name = "event"
 
-    profile_id = fields.Many2one("fi.ess.profile", ondelete="set null", index=True)
+    profile_id = fields.Many2one("employee.self.service.profile", ondelete="set null", index=True)
     company_id = fields.Many2one(related="profile_id.company_id", store=True, index=True)
     actor_user_id = fields.Many2one("res.users", ondelete="set null")
     event = fields.Selection([

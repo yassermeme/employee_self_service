@@ -2,12 +2,12 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class FiEssConfig(models.Model):
-    _name = "fi.ess.config"
+class EmployeeSelfServiceConfig(models.Model):
+    _name = "employee.self.service.config"
     _description = "Employee Self Service Configuration"
     _rec_name = "company_id"
     _sql_constraints = [
-        ("fi_ess_config_company_unique", "unique(company_id)", "Only one ESS configuration is allowed per company."),
+        ("ess_config_company_unique", "unique(company_id)", "Only one ESS configuration is allowed per company."),
     ]
 
     company_id = fields.Many2one("res.company", required=True, default=lambda self: self.env.company, index=True)

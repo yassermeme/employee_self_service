@@ -2,8 +2,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
 
-class FiEssRequestType(models.Model):
-    _name = "fi.ess.request.type"
+class EmployeeSelfServiceRequestType(models.Model):
+    _name = "employee.self.service.request.type"
     _description = "ESS Financial Request Type"
     _order = "company_id, name"
 
@@ -14,20 +14,20 @@ class FiEssRequestType(models.Model):
     maximum_amount = fields.Monetary(default=0, help="Zero means no maximum.")
     currency_id = fields.Many2one(related="company_id.currency_id", readonly=True)
     requires_document = fields.Boolean()
-    _sql_constraints = [("fi_ess_request_type_amount", "CHECK(maximum_amount >= 0 AND minimum_amount >= 0)", "Amounts cannot be negative.")]
+    _sql_constraints = [("ess_request_type_amount", "CHECK(maximum_amount >= 0 AND minimum_amount >= 0)", "Amounts cannot be negative.")]
 
 
-class FiEssFinancialRequest(models.Model):
-    _name = "fi.ess.financial.request"
+class EmployeeSelfServiceFinancialRequest(models.Model):
+    _name = "employee.self.service.financial.request"
     _description = "ESS Financial Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc"
 
     name = fields.Char(default="New", readonly=True, copy=False)
-    profile_id = fields.Many2one("fi.ess.profile", required=True, readonly=True, ondelete="restrict", index=True)
+    profile_id = fields.Many2one("employee.self.service.profile", required=True, readonly=True, ondelete="restrict", index=True)
     employee_id = fields.Many2one(related="profile_id.employee_id", store=True, readonly=True, index=True)
     company_id = fields.Many2one(related="profile_id.company_id", store=True, readonly=True, index=True)
-    request_type_id = fields.Many2one("fi.ess.request.type", required=True, ondelete="restrict")
+    request_type_id = fields.Many2one("employee.self.service.request.type", required=True, ondelete="restrict")
     amount = fields.Monetary(required=True)
     currency_id = fields.Many2one(related="company_id.currency_id", readonly=True)
     reason = fields.Text(required=True)
@@ -53,7 +53,7 @@ class FiEssFinancialRequest(models.Model):
         for record in self:
             if record.state != "draft": raise ValidationError(_("Only draft requests can be submitted."))
             record.write({"state": "submitted"})
-            self.env["fi.ess.audit.log"].sudo().create({"profile_id": record.profile_id.id, "event": "financial_submitted"})
+            self.env["employee.self.service.audit.log"].sudo().create({"profile_id": record.profile_id.id, "event": "financial_submitted"})
 
     def action_cancel(self):
         if any(record.state not in ("draft", "submitted") for record in self): raise ValidationError(_("Only draft or submitted requests can be cancelled."))

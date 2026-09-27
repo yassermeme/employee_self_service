@@ -1,4 +1,4 @@
-# FI Employee Self Service (Odoo 19)
+# Employee Self Service (ESS) (Odoo 19)
 
 ## Installation
 
@@ -22,7 +22,7 @@ must be enabled only after confirming their installed Odoo 19 model and report A
 
 All employee-facing routes resolve the employee on the server. A shared-mode login
 creates a 48-byte random secret held only in Odoo's server-side session and a hashed
-record in `fi.ess.session`. The record is bound to the authenticated Odoo user and the
+record in `employee.self.service.session`. The record is bound to the authenticated Odoo user and the
 Odoo session identifier, expires, and can be revoked. No route accepts an employee ID
 as its authority. Financial records are always queried by the resolved profile ID.
 
@@ -44,8 +44,8 @@ ownership checks have been added and tested against the installed Odoo edition.
 Run Odoo module tests on a disposable Odoo 19 database:
 
 ```bash
-odoo-bin -d ess_test -i fi_employee_self_service --test-enable --stop-after-init
-odoo-bin -d ess_test -u fi_employee_self_service --test-enable --stop-after-init
+odoo-bin -d ess_test -i employee_self_service --test-enable --stop-after-init
+odoo-bin -d ess_test -u employee_self_service --test-enable --stop-after-init
 ```
 
 The supplied test suite focuses on the server-side session and cross-profile financial
