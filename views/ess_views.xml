@@ -1,19 +1,265 @@
 <odoo>
- <record id="action_ess_config" model="ir.actions.act_window"><field name="name">ESS Configuration</field><field name="res_model">employee.self.service.config</field><field name="view_mode">list,form</field></record>
- <record id="action_ess_profiles" model="ir.actions.act_window"><field name="name">ESS Profiles</field><field name="res_model">employee.self.service.profile</field><field name="view_mode">list,form</field></record>
- <record id="action_ess_requests" model="ir.actions.act_window"><field name="name">Financial Requests</field><field name="res_model">employee.self.service.financial.request</field><field name="view_mode">list,form</field></record>
- <menuitem
-    id="menu_ess_root"
-    name="Employee Self Service"
-    groups="employee_self_service.group_ess_hr_manager,employee_self_service.group_ess_administrator"
-    sequence="70"
-/>
- <menuitem id="menu_ess_profiles" name="Profiles" parent="menu_ess_root" action="action_ess_profiles" groups="employee_self_service.group_ess_hr_manager"/>
- <menuitem id="menu_ess_requests" name="Financial Requests" parent="menu_ess_root" action="action_ess_requests" groups="employee_self_service.group_ess_hr_manager"/>
- <menuitem id="menu_ess_config" name="Configuration" parent="menu_ess_root" action="action_ess_config" groups="employee_self_service.group_ess_administrator"/>
- <record id="ess_config_view_form" model="ir.ui.view"><field name="name">employee.self.service.config.form</field><field name="model">employee.self.service.config</field><field name="arch" type="xml"><form><sheet><group><field name="company_id"/><field name="enabled"/><field name="authentication_mode"/><field name="shared_user_id"/><field name="login_identifier"/></group><group string="Security"><field name="session_duration_minutes"/><field name="max_failed_logins"/><field name="lockout_minutes"/><field name="invitation_validity_hours"/><field name="password_min_length"/><field name="password_expiration_days"/></group><group string="Services"><field name="allow_payslips"/><field name="allow_leave"/><field name="allow_attendance_view"/><field name="allow_attendance_action"/><field name="allow_financial_requests"/></group></sheet></form></field></record>
- <record id="ess_profile_view_form" model="ir.ui.view"><field name="name">employee.self.service.profile.form</field><field name="model">employee.self.service.profile</field><field name="arch" type="xml"><form><header><button name="action_enable" type="object" string="Enable"/><button name="action_disable" type="object" string="Disable"/><button name="action_unlock" type="object" string="Unlock"/><button name="action_revoke_sessions" type="object" string="Revoke Sessions"/></header><sheet><group><field name="employee_id"/><field name="company_id"/><field name="employee_code"/><field name="work_email"/><field name="user_id"/><field name="enabled"/><field name="authentication_mode"/><field name="state"/><field name="password_set"/><field name="failed_login_count"/><field name="lockout_until"/><field name="last_successful_login"/><field name="allowed_request_type_ids" widget="many2many_tags"/></group></sheet></form></field></record>
- <template id="ess_shared_login" name="ESS shared login"><t t-call="web.layout"><main class="container py-5"><h1>Employee Self Service</h1><t t-if="error"><p class="alert alert-danger" t-esc="error"/></t><form action="/ess/shared/login" method="post"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><div class="mb-3"><label>Employee code or work email</label><input name="identifier" required="required" class="form-control" autocomplete="username"/></div><div class="mb-3"><label>Password</label><input name="password" type="password" required="required" class="form-control" autocomplete="current-password"/></div><button class="btn btn-primary">Sign in</button></form></main></t></template>
- <template id="ess_dashboard" name="ESS dashboard"><t t-call="web.layout"><main class="container py-4"><h1>Welcome, <t t-esc="profile.employee_id.name"/></h1><dl><dt>Employee code</dt><dd t-esc="profile.employee_code"/><dt>Company</dt><dd t-esc="profile.company_id.name"/></dl><div class="card"><div class="card-body">Pending financial requests: <t t-esc="financial_count"/></div></div><a href="/ess/financial" class="btn btn-primary mt-3">Financial requests</a><form action="/ess/logout" method="post" class="d-inline"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><button class="btn btn-outline-secondary mt-3">End ESS session</button></form></main></t></template>
- <template id="ess_financial_list" name="ESS financial requests"><t t-call="web.layout"><main class="container py-4"><h1>My financial requests</h1><table class="table"><thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody><tr t-foreach="records" t-as="record"><td t-esc="record.request_type_id.name"/><td t-esc="record.amount"/><td t-esc="record.state"/></tr></tbody></table><a href="/ess">Back to dashboard</a></main></t></template>
+    <record id="action_ess_config" model="ir.actions.act_window">
+        <field name="name">ESS Configuration</field>
+        <field name="res_model">employee.self.service.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_ess_profiles" model="ir.actions.act_window">
+        <field name="name">ESS Profiles</field>
+        <field name="res_model">employee.self.service.profile</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_ess_requests" model="ir.actions.act_window">
+        <field name="name">Financial Requests</field>
+        <field name="res_model">employee.self.service.financial.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_ess_root"
+        name="Employee Self Service"
+        groups="employee_self_service.group_ess_hr_manager,employee_self_service.group_ess_administrator"
+        sequence="70"
+    />
+
+    <menuitem
+        id="menu_ess_profiles"
+        name="Profiles"
+        parent="menu_ess_root"
+        action="action_ess_profiles"
+        groups="employee_self_service.group_ess_hr_manager"
+    />
+
+    <menuitem
+        id="menu_ess_requests"
+        name="Financial Requests"
+        parent="menu_ess_root"
+        action="action_ess_requests"
+        groups="employee_self_service.group_ess_hr_manager"
+    />
+
+    <menuitem
+        id="menu_ess_config"
+        name="Configuration"
+        parent="menu_ess_root"
+        action="action_ess_config"
+        groups="employee_self_service.group_ess_administrator"
+    />
+
+    <!-- ESS Configuration Form -->
+    <record id="ess_config_view_form" model="ir.ui.view">
+        <field name="name">employee.self.service.config.form</field>
+        <field name="model">employee.self.service.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="enabled"/>
+                        <field name="authentication_mode"/>
+                        <field name="shared_user_id"/>
+                        <field name="login_identifier"/>
+                    </group>
+
+                    <group string="Security">
+                        <field name="session_duration_minutes"/>
+                        <field name="max_failed_logins"/>
+                        <field name="lockout_minutes"/>
+                        <field name="invitation_validity_hours"/>
+                        <field name="password_min_length"/>
+                        <field name="password_expiration_days"/>
+                    </group>
+
+                    <group string="Services">
+                        <field name="allow_payslips"/>
+                        <field name="allow_leave"/>
+                        <field name="allow_attendance_view"/>
+                        <field name="allow_attendance_action"/>
+                        <field name="allow_financial_requests"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ESS Profile Form -->
+    <record id="ess_profile_view_form" model="ir.ui.view">
+        <field name="name">employee.self.service.profile.form</field>
+        <field name="model">employee.self.service.profile</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="action_enable"
+                        type="object"
+                        string="Enable"
+                    />
+                    <button
+                        name="action_disable"
+                        type="object"
+                        string="Disable"
+                    />
+                    <button
+                        name="action_unlock"
+                        type="object"
+                        string="Unlock"
+                    />
+                    <button
+                        name="action_revoke_sessions"
+                        type="object"
+                        string="Revoke Sessions"
+                    />
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="company_id"/>
+                        <field name="employee_code"/>
+                        <field name="work_email"/>
+                        <field name="user_id"/>
+                        <field name="enabled"/>
+                        <field name="authentication_mode"/>
+                        <field name="state"/>
+                        <field name="failed_login_count"/>
+                        <field name="lockout_until"/>
+                        <field name="last_successful_login"/>
+                        <field
+                            name="allowed_request_type_ids"
+                            widget="many2many_tags"
+                        />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Shared Login Page -->
+    <template id="ess_shared_login" name="ESS shared login">
+        <t t-call="web.layout">
+            <main class="container py-5">
+                <h1>Employee Self Service</h1>
+
+                <t t-if="error">
+                    <p class="alert alert-danger" t-esc="error"/>
+                </t>
+
+                <form action="/ess/shared/login" method="post">
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        t-att-value="request.csrf_token()"
+                    />
+
+                    <div class="mb-3">
+                        <label>Employee code or work email</label>
+                        <input
+                            name="identifier"
+                            required="required"
+                            class="form-control"
+                            autocomplete="username"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Password</label>
+                        <input
+                            name="password"
+                            type="password"
+                            required="required"
+                            class="form-control"
+                            autocomplete="current-password"
+                        />
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Sign in
+                    </button>
+                </form>
+            </main>
+        </t>
+    </template>
+
+    <!-- ESS Dashboard -->
+    <template id="ess_dashboard" name="ESS dashboard">
+        <t t-call="web.layout">
+            <main class="container py-4">
+                <h1>
+                    Welcome,
+                    <t t-esc="profile.employee_id.name"/>
+                </h1>
+
+                <dl>
+                    <dt>Employee code</dt>
+                    <dd t-esc="profile.employee_code"/>
+
+                    <dt>Company</dt>
+                    <dd t-esc="profile.company_id.name"/>
+                </dl>
+
+                <div class="card">
+                    <div class="card-body">
+                        Pending financial requests:
+                        <t t-esc="financial_count"/>
+                    </div>
+                </div>
+
+                <a
+                    href="/ess/financial"
+                    class="btn btn-primary mt-3"
+                >
+                    Financial requests
+                </a>
+
+                <form
+                    action="/ess/logout"
+                    method="post"
+                    class="d-inline"
+                >
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        t-att-value="request.csrf_token()"
+                    />
+
+                    <button class="btn btn-outline-secondary mt-3">
+                        End ESS session
+                    </button>
+                </form>
+            </main>
+        </t>
+    </template>
+
+    <!-- ESS Financial Requests -->
+    <template id="ess_financial_list" name="ESS financial requests">
+        <t t-call="web.layout">
+            <main class="container py-4">
+                <h1>My financial requests</h1>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr t-foreach="records" t-as="record">
+                            <td t-esc="record.request_type_id.name"/>
+                            <td t-esc="record.amount"/>
+                            <td t-esc="record.state"/>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <a href="/ess">
+                    Back to dashboard
+                </a>
+            </main>
+        </t>
+    </template>
 </odoo>
